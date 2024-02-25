@@ -27,6 +27,7 @@ MediaWiki\MediaWiki\Terraform – Use the terraform init command to initialize t
 
 Below is a Jenkin file that will perform all the steps sequentially - 
 
+
 pipeline {
     agent any
     
