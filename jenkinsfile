@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+    
+    environment {
+        DOCKER_IMAGE_TAG = 'latest'
+    }
+    
+    stages {
+        stage('Terraform') {
+            steps {
+                // Navigate to the Terraform directory
+                dir('Terraform') {
+                    // Initialize Terraform
+                    sh 'terraform init'
+                    
+                    // Plan Terraform deployment
+                    sh 'terraform plan -out=tfplan'
+                    
+                    // Apply Terraform deployment
+                    sh 'terraform apply -auto-approve tfplan'
+                }
+            }
+        }
+        
+        stage('Build Docker Images') {
+            steps {
+                // Build MediaWiki Docker image
+                dir('Mediawiki/DockerFiles') {
+                    sh 'docker build -t mediawiki:${DOCKER_IMAGE_TAG} MediaWiki_Dockerfile'
+                }
+                
+                // Build MySQL Docker image
+                dir('Mediawiki/DockerFiles') {
+                    sh 'docker build -t mysql:${DOCKER_IMAGE_TAG} mysql_DockerFile'
+                }
+            }
+        }
+        
+        stage('Deploy with Helm') {
+            steps {
+                // Install Helm
+                sh 'helm init --client-only'
+                
+                // Deploy MediaWiki with Helm
+                dir('Mediawiki/HelmCharts') {
+                    sh 'helm install mediawiki .'
+                }
+            }
+        }
+    }
+}
