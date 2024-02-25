@@ -1,0 +1,11 @@
+# Use the official MySQL image
+FROM mysql:5.7
+
+# Set environment variables
+ENV MYSQL_ROOT_PASSWORD=rootpassword
+ENV MYSQL_DATABASE=mediawiki
+ENV MYSQL_USER=wikiuser
+ENV MYSQL_PASSWORD=wikipassword
+
+# Expose port 3306
+EXPOSE 3306

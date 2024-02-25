@@ -1,0 +1,16 @@
+---
+- name: Ensure MediaWiki configuration directory exists
+  file:
+    path: /var/www/html/config
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+- name: Copy configuration files to MediaWiki config directory
+  copy:
+    src: /path/to/your/config/files/*  # Adjust the path accordingly
+    dest: /var/www/html/config
+    owner: www-data
+    group: www-data
+    mode: '0644'

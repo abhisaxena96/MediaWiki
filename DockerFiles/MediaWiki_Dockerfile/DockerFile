@@ -1,0 +1,21 @@
+FROM centos:7
+
+RUN yum install -y centos-release-scl
+
+RUN yum install -y httpd
+
+RUN yum install -y -httpd24-httpd rh-php73-php rh-php73-php rh-php73-php-mbstring rh-php73-php-mysqlnd rh-php73-php-gd rh-php73-php-xml && yum clean all
+
+WORKDIR /var/www/html
+
+RUN yum install -y wget
+
+RUN wget https://releases.wikimedia.org/mediawiki/1.41/mediawiki-1.41.0.tar.gz && tar -zxf mediawiki-1.41.0.tar.gz && mv /var/www/html/mediawiki-1.41.0/* /var/www/html/ && rm -rf mediawiki-1.41.0 mediawiki-1.41.0.tar.gz
+
+RUN chown -R apache:apache /var/www/html
+
+RUN chmod 755 /var/www/html
+
+RUN sed -i 's|^LoadModule http2_module modules/mod_http2.so|#LoadModule http2_module modules/mod_http2.so|' /etc/httpd/conf.modules.d/00-base.conf
+
+CMD /usr/sbin/apachectl -DFOREGROUND

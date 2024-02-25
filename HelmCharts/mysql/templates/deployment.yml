@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mediawiki-mysql
+  labels:
+    app: mediawiki-mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mediawiki-mysql
+  template:
+    metadata:
+      labels:
+        app: mediawiki-mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:5.7
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: rootpassword
+          - name: MYSQL_DATABASE
+            value: mediawiki
+          - name: MYSQL_USER
+            value: wikiuser
+          - name: MYSQL_PASSWORD
+            value: wikipassword
+        ports:
+        - containerPort: 3306

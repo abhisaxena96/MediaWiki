@@ -1,0 +1,8 @@
+image:
+  repository: localhost:5000/mediawiki
+  tag: latest
+
+database:
+  host: db
+  user: wikiuser
+  password: wikipassword

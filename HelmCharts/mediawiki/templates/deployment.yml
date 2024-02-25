@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mediawiki-deployment
+  labels:
+    app: mediawiki
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mediawiki
+  template:
+    metadata:
+      labels:
+        app: mediawiki
+    spec:
+      containers:
+        - name: mediawiki
+          image: mediawiki:latest  # Replace with your actual image name and tag
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          env:
+            - name: MEDIAWIKI_DB_HOST
+              value: mediawiki-mysql
+            - name: MEDIAWIKI_DB_USER
+              value: wikiuser
+            - name: MEDIAWIKI_DB_PASSWORD
+              value: wikipassword
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "250m"
+              memory: "256Mi"

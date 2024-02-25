@@ -1,0 +1,9 @@
+mysql:
+  image:
+    repository: mysql
+    tag: 5.7
+  rootPassword: rootpassword
+  database:
+    name: mediawiki
+    user: wikiuser
+    password: wikipassword
