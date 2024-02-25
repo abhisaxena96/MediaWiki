@@ -25,4 +25,59 @@ Values.yaml file is to customize your helm chart for each mediawiki and mysql de
 This is mainly wrriten to deploy your docker desktop cluster, which I created manually but can also be done using the terraform code in the main.tf file
 MediaWiki\MediaWiki\Terraform – Use the terraform init command to initialize the provider binaries and check the terraform plan and apply at the end using terraform apply –auto-approve.
 
+Below is a Jenkin file that will perform all the steps sequentially - 
+
+pipeline {
+    agent any
+    
+    environment {
+        DOCKER_IMAGE_TAG = 'latest'
+    }
+    
+    stages {
+        stage('Terraform') {
+            steps {
+                // Navigate to the Terraform directory
+                dir('MediaWiki\Terraform') {
+                    // Initialize Terraform
+                    sh 'terraform init'
+                    
+                    // Plan Terraform deployment
+                    sh 'terraform plan -out=tfplan'
+                    
+                    // Apply Terraform deployment
+                    sh 'terraform apply -auto-approve tfplan'
+                }
+            }
+        }
+        
+        stage('Build Docker Images') {
+            steps {
+                // Build MediaWiki Docker image
+                dir('MediaWiki\DockerFiles\MediaWiki_Dockerfile') {
+                    sh 'docker build -t mediawiki:${DOCKER_IMAGE_TAG} MediaWiki_Dockerfile'
+                }
+                
+                // Build MySQL Docker image
+                dir('MediaWiki\DockerFiles\mysql_DockerFile') {
+                    sh 'docker build -t mysql:${DOCKER_IMAGE_TAG} mysql_DockerFile'
+                }
+            }
+        }
+        
+        stage('Deploy with Helm') {
+            steps {
+                // Install Helm
+                sh 'helm init --client-only'
+                
+                // Deploy MediaWiki with Helm
+                dir('Mediawiki/HelmCharts') {
+                    sh 'helm install mediawiki .'
+                }
+            }
+        }
+    }
+}
+
+
 
